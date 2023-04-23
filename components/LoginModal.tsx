@@ -13,6 +13,8 @@ import { useFormik } from 'formik';
 import Link from 'next/link';
 import { login, IUser } from '../common/apis/authApi';
 import { loginStart, loginSuccess } from '../redux/authSlice';
+import { addStart, addSuccess } from '../redux/cartSlice';
+import { getAllCartItem } from '../common/apis/cartApi';
 
 import Swal from 'sweetalert2';
 import { useDispatch } from 'react-redux';
@@ -25,6 +27,12 @@ interface IProps {
 const Login = (props: IProps) => {
   const { setIsLogin, onClose } = props;
   const dispatch = useDispatch();
+
+  const handleGetCart = async () => {
+    const cart = await getAllCartItem();
+    dispatch(addSuccess(cart.total));
+  };
+
   const formik = useFormik({
     initialValues: {
       telephone: '',
@@ -36,8 +44,11 @@ const Login = (props: IProps) => {
         const { accessToken, ...user } = await login(values);
         localStorage.setItem('user', JSON.stringify(user));
         localStorage.setItem('accessToken', JSON.stringify(accessToken));
-        dispatch(loginSuccess(user));
-        onClose();
+        if (user) {
+          dispatch(loginSuccess(user));
+          handleGetCart();
+          onClose();
+        }
       } catch (error: any) {
         Swal.fire({
           customClass: {

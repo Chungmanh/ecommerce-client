@@ -1,0 +1,108 @@
+.wrapper {
+  background-color: #fafafa;
+  width: 100%;
+  margin-top: 15px;
+  h6 {
+      font-weight: 700;
+      text-transform: uppercase;
+      font-size: 12px;
+      margin-bottom: 8px;
+  }
+
+  a {
+      color: #666;
+      font-size: 12px;
+  }
+  li {
+      line-height: 23px;
+      text-transform: capitalize;
+      list-style: none;
+  }
+  .about-us {
+      display: flex;
+      width: 80%;
+      margin: 0 auto;
+      padding: 60px 10px 20px;
+
+      .col-3-footer{
+          display: flex;
+          width: 60%;
+      }
+
+      .col-2-footer{
+          display: flex;
+          width: 40%;
+          margin-left: 50px;
+      }
+  }
+
+  .info, .support, .service {
+      flex: 1;
+  }
+  .contact-us {
+      flex: 3;
+  }
+
+  .row {
+      display: flex;
+      margin-bottom: 25px;
+  }
+  .connect-us {
+      flex: 3;
+  }
+  .app {
+      flex: 2;
+  }
+
+  .form-email {
+      display: flex;
+      align-items: center;
+
+      .input-email {
+          flex: 0.7;
+      }
+      // .btn-register-email {
+      //     flex: 1;
+      // }
+  }
+
+  .content-info {
+      display: flex;
+      height: 20px;
+      li {
+          margin-right: 10px;
+          svg {
+              height: 20px;
+          }
+      }
+  }
+
+  .footer-bottom {
+      width: 80%;
+      margin: 0 auto;
+      padding: 20px 10px;
+      font-size: 12px;
+      
+      .copyright {
+          color: #666;
+      }
+
+      ul {
+          margin-top: 5px;
+          max-width: 520px;
+      }
+      li {
+          display: inline-block;
+          padding: 0 10px;
+          margin-bottom: 10px;
+          line-height: 1.15;
+          text-decoration: underline;
+      }
+      li:nth-child(1), li:nth-child(4) {
+          padding-left: 0px;
+      }
+      li:not(li:last-child) {
+          border-right: 1px solid #ccc;
+      }
+  }
+}

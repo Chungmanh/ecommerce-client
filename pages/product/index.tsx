@@ -30,8 +30,10 @@ const Product: React.FC<Props> = ({ name, image, price }) => {
           boxShadow: '0 0.0625rem 0.125rem 0 rgb(0 0 0 / 10%)',
           ':hover': {
             boxShadow: '0 2px 4px 0 rgb(0 0 0 / 25%)',
+            cursor: 'pointer',
           },
           width: '100%',
+          backgroundColor: '#fff',
         }}
       >
         <Image

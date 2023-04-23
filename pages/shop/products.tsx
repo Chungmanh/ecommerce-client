@@ -11,29 +11,67 @@ import {
   TableCaption,
   TableContainer,
   IconButton,
+  useDisclosure,
 } from '@chakra-ui/react';
 import Head from 'next/head';
 import type { NextPageWithLayout } from '../_app';
 import { IoAdd } from 'react-icons/io5';
-import { AiOutlineMinus } from 'react-icons/ai';
 import { BsTrash3 } from 'react-icons/bs';
 import { CiEdit } from 'react-icons/ci';
 import LayoutShop from '../../components/LayoutShop';
-import ProductForm from '../../components/ProductForm';
-import { getProductsByShop, IProduct } from '../../common/apis/productApi';
+import ProductFormDrawer from '../../components/ProductFormDrawer';
+import {
+  getProductsByShop,
+  deleteProduct,
+  IProduct,
+} from '../../common/apis/productApi';
+import Swal from 'sweetalert2';
 
 const Shop: NextPageWithLayout = () => {
-  const [isForm, setIsForm] = useState(false);
+  const { isOpen, onOpen, onClose } = useDisclosure();
   const [products, setProducts] = useState<any[]>([]);
+  const [productId, setProductId] = useState('');
+
+  const handleEditProduct = async (id: string) => {
+    setProductId(id);
+    onOpen();
+  };
+
+  const handleDeleteProduct = async (id: string) => {
+    Swal.fire({
+      title: 'Are you sure?',
+      text: "You won't be able to revert this!",
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Yes, delete it!',
+    }).then(async (result) => {
+      if (result.isConfirmed) {
+        const deleted = await deleteProduct(id);
+        if (deleted && Object.keys(deleted).length !== 0) {
+          const new_products = products.filter((product) => product._id !== id);
+          Swal.fire('Deleted!', 'Your file has been deleted.', 'success');
+          setProducts(new_products);
+        } else {
+          Swal.fire('Error!', 'ko xoa dc.', 'error');
+        }
+      }
+    });
+  };
 
   useEffect(() => {
     async function getProducts() {
       const listProduct = await getProductsByShop();
       setProducts(listProduct);
     }
-
+    console.log('run useEffect');
+    if (!isOpen) {
+      console.log('setProductId');
+      setProductId('');
+    }
     getProducts();
-  }, []);
+  }, [isOpen]);
   return (
     <div>
       <Head>
@@ -51,12 +89,12 @@ const Shop: NextPageWithLayout = () => {
             <Thead>
               <Tr>
                 <Th>Tên sản phẩm</Th>
-                <Th>Ảnh</Th>
-                <Th>Giá</Th>
-                <Th>Số lượng</Th>
-                <Th>Mô tả</Th>
-                <Th>Trạng thái</Th>
-                <Th>Thao tác</Th>
+                <Th textAlign={'center'}>Ảnh</Th>
+                <Th textAlign={'center'}>Giá</Th>
+                <Th textAlign={'center'}>Số lượng</Th>
+                <Th textAlign={'center'}>Mô tả</Th>
+                <Th textAlign={'center'}>Trạng thái</Th>
+                <Th textAlign={'center'}>Thao tác</Th>
               </Tr>
             </Thead>
             <Tbody>
@@ -90,7 +128,21 @@ const Shop: NextPageWithLayout = () => {
                     </Td>
                     <Td isNumeric>{product.price}</Td>
                     <Td>{product.quantity} (cái)</Td>
-                    <Td>{product.description}</Td>
+                    <Td>
+                      <Box
+                        sx={{
+                          width: '300px',
+                          fontSize: '12px',
+                          overflow: 'hidden',
+                          whiteSpace: 'pre-wrap',
+                          display: '-webkit-box',
+                          WebkitBoxOrient: 'vertical',
+                          WebkitLineClamp: 2,
+                        }}
+                      >
+                        {product.description}
+                      </Box>
+                    </Td>
                     <Td>{product.status ? 'đang bán' : ''}</Td>
                     <Td>
                       <Box
@@ -99,8 +151,20 @@ const Shop: NextPageWithLayout = () => {
                           justifyContent: 'space-between',
                         }}
                       >
-                        <CiEdit size={18} />
-                        <BsTrash3 size={16} />
+                        <CiEdit
+                          size={18}
+                          style={{
+                            cursor: 'pointer',
+                          }}
+                          onClick={() => handleEditProduct(product._id)}
+                        />
+                        <BsTrash3
+                          size={16}
+                          style={{
+                            cursor: 'pointer',
+                          }}
+                          onClick={() => handleDeleteProduct(product._id)}
+                        />
                       </Box>
                     </Td>
                   </Tr>
@@ -120,21 +184,20 @@ const Shop: NextPageWithLayout = () => {
             variant="outline"
             colorScheme="teal"
             aria-label="Add"
-            icon={isForm ? <AiOutlineMinus /> : <IoAdd />}
-            onClick={() => setIsForm(!isForm)}
+            icon={<IoAdd />}
+            onClick={onOpen}
           />
-          {isForm && (
-            <Box>
-              <ProductForm />
-            </Box>
-          )}
+          <ProductFormDrawer
+            isOpen={isOpen}
+            onClose={onClose}
+            productId={productId}
+          />
         </Box>
       </Box>
     </div>
   );
 };
 
-// const Shop = () => {
 Shop.getLayout = function getLayout(page: ReactElement) {
   return <LayoutShop>{page}</LayoutShop>;
 };

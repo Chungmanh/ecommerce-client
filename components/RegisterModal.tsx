@@ -26,6 +26,7 @@ const Register = (props: IProps) => {
     initialValues: {
       username: '',
       telephone: '',
+      address: '',
       password: '',
     },
     onSubmit: async (values) => {
@@ -72,7 +73,7 @@ const Register = (props: IProps) => {
               value={formik.values.username}
             />
           </FormControl>
-          <FormControl marginTop={'15px'}>
+          <FormControl marginTop={'10px'}>
             <Input
               placeholder="Số điện thoại"
               type={'text'}
@@ -81,7 +82,16 @@ const Register = (props: IProps) => {
               value={formik.values.telephone}
             />
           </FormControl>
-          <FormControl marginTop={'15px'}>
+          <FormControl marginTop={'10px'}>
+            <Input
+              placeholder="Địa chỉ"
+              type={'text'}
+              name={'address'}
+              onChange={formik.handleChange}
+              value={formik.values.address}
+            />
+          </FormControl>
+          <FormControl marginTop={'10px'}>
             <Input
               placeholder="Mật khẩu"
               type={'password'}
@@ -94,7 +104,7 @@ const Register = (props: IProps) => {
             <Input placeholder="Nhập Lại mật khẩu" type={'password'} />
           </FormControl> */}
           <Button
-            marginTop={'20px'}
+            marginTop={'15px'}
             colorScheme="twitter"
             width={'100%'}
             type={'submit'}

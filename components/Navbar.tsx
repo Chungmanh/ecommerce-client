@@ -22,9 +22,9 @@ import { HiOutlineHome, HiOutlineUser } from 'react-icons/hi';
 import Link from 'next/link';
 import { loginStart, loginSuccess } from '../redux/authSlice';
 import ModalComponent from './Modal';
-import { useSelector } from 'react-redux';
+import CartComponent from './Cart';
+import { useSelector, useDispatch } from 'react-redux';
 import { useEffect } from 'react';
-import { useDispatch } from 'react-redux';
 import { useRouter } from 'next/router';
 
 const Navbar = () => {
@@ -32,6 +32,7 @@ const Navbar = () => {
   const dispatch = useDispatch();
   const router = useRouter();
   const user = useSelector((state: any) => state.auth.login.currentUser);
+  const totalCart = useSelector((state: any) => state.cart.cart.currentTotal);
 
   const handleLogout = async () => {
     await localStorage.removeItem('user');
@@ -50,9 +51,10 @@ const Navbar = () => {
     <Box
       sx={{
         padding: '8px 8%',
-        backgroundImage:
-          // 'linear-gradient(to right, var(--chakra-colors-cyan-700), var(--chakra-colors-purple-500))',
-          'linear-gradient(to right, #fb5730, #e26cff)',
+        // backgroundImage:
+        //   // 'linear-gradient(to right, var(--chakra-colors-cyan-700), var(--chakra-colors-purple-500))',
+        //   'linear-gradient(to right, #fb5730, #e26cff)',
+        backgroundColor: '#47befe',
         color: '#fff',
       }}
     >
@@ -119,6 +121,9 @@ const Navbar = () => {
                   <MenuItem>
                     <Link href={'/shop'}>Quản lý cửa hàng</Link>
                   </MenuItem>
+                  <MenuItem>
+                    <Link href={'/order'}>Đơn mua</Link>
+                  </MenuItem>
                   <MenuItem>Lịch sử mua hàng</MenuItem>
                   <MenuItem>Sản phẩm yêu thích</MenuItem>
                   <MenuItem onClick={handleLogout}>Đăng xuất</MenuItem>
@@ -146,20 +151,6 @@ const Navbar = () => {
             />
           )}
 
-          {/* <Box
-            display={'flex'}
-            alignItems={'center'}
-            padding={'4px 10px'}
-            borderRadius={'8px'}
-            cursor={'pointer'}
-            _hover={{ backgroundColor: 'rgba(39, 39, 42, 0.12)' }}
-          >
-            <Avatar size="sm" name="Manh Chung" src="" />
-            <Text style={{ whiteSpace: 'nowrap', marginLeft: '5px' }}>
-              Chung
-            </Text>
-          </Box> */}
-
           <Box
             display={'flex'}
             alignItems={'center'}
@@ -168,9 +159,30 @@ const Navbar = () => {
             cursor={'pointer'}
             _hover={{ backgroundColor: 'rgba(0, 96, 255, 0.12)' }}
           >
-            <Link href={'/cart'}>
-              <FiShoppingCart size={18} />
-            </Link>
+            <Box sx={{ position: 'relative' }}>
+              <CartComponent btnComponent={<FiShoppingCart size={18} />} />
+              {totalCart && totalCart > 0 ? (
+                <Box
+                  as="div"
+                  sx={{
+                    position: 'absolute',
+                    top: '-8px',
+                    color: 'red',
+                    right: '-14px',
+                    textAlign: 'center',
+                    width: '20px',
+                    fontSize: '12px',
+                    fontWeight: 700,
+                    borderRadius: '50%',
+                    backgroundColor: '#fff',
+                  }}
+                >
+                  {totalCart}
+                </Box>
+              ) : (
+                ''
+              )}
+            </Box>
           </Box>
         </Box>
       </Box>

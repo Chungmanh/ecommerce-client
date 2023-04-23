@@ -19,6 +19,7 @@ export interface IUserResponse {
 export const register = async (user: {
   username: String;
   telephone: String;
+  address: String;
   password: String;
 }) => {
   const url = '/auth/register';

@@ -15,10 +15,10 @@ const axiosClient = axios.create({
 
 axiosClient.interceptors.request.use(async (config) => {
   const accessToken = JSON.parse(`${localStorage?.getItem('accessToken')}`);
-  console.log('lay accessToken: ', accessToken);
+  // console.log('lay accessToken: ', accessToken);
 
   if (accessToken) {
-    console.log('token: ', accessToken);
+    // console.log('token: ', accessToken);
 
     config.headers.Authorization = `Bearer ${accessToken}`;
   }
@@ -28,7 +28,7 @@ axiosClient.interceptors.request.use(async (config) => {
 
 axiosClient.interceptors.response.use(
   (response) => {
-    console.log('response: ', response);
+    // console.log('response: ', response);
 
     if (response && response.data) {
       return response.data;
@@ -39,7 +39,7 @@ axiosClient.interceptors.response.use(
   async (error) => {
     // Handle errors
     const config = error.config;
-    console.log('error.response?.data: ', error.response?.data);
+    // console.log('error.response?.data: ', error.response);
 
     const { name, message } = error.response?.data || {};
 
@@ -48,16 +48,20 @@ axiosClient.interceptors.response.use(
       const accessToken = await refreshToken();
 
       if (accessToken) {
-        console.log('da lay lai:  ', accessToken);
+        // console.log('da lay lai:  ', accessToken);
         localStorage.setItem('accessToken', JSON.stringify(accessToken));
         config.headers.Authorization = `Bearer ${accessToken}`;
-        if (config.data) {
-          console.log('Co form data');
-          config.headers['content-type'] = 'multipart/form-data';
-        }
+        // if (config.data) {
+        //   console.log('Co form data');
+        //   config.headers['content-type'] = 'multipart/form-data';
+        // }
         return axiosClient(config);
       }
     }
+
+    // if (name === 'Authenticated' && message === 'You are not authenticated') {
+    //   return false;
+    // }
 
     throw error;
   }
