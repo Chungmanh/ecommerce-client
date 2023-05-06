@@ -204,6 +204,7 @@ const ItemInHistoryOrderCustomer = (props: any) => {
         <RatingModal
           isOpen={isOpen}
           onClose={onClose}
+          reloadPage={reloadPage}
           productId={ratingCurrent}
         />
       )}

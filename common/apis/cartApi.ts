@@ -47,7 +47,7 @@ export const addToCart = async (item: {
 export const updateCart = async (
   productId: string,
   type: string
-): Promise<number> => {
+): Promise<any> => {
   const url = '/cart/update';
   return axiosClient.put(
     url,

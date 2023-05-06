@@ -18,3 +18,46 @@ a {
 .my-swal {
   z-index: 1500 !important;
 }
+
+.pagination {
+  list-style: none;
+  display: flex;
+  justify-content: center;
+  color: #00000066;
+  align-items: center;
+  margin-top: 20px;
+  margin-bottom: 60px;
+  font-size: 1.2rem;
+  gap: 5px;
+}
+
+.pagination .page-num {
+  padding: 3px 15px;
+  margin: 0px 15px;
+  cursor: pointer;
+  border-radius: 3px;
+  font-weight: 400;
+}
+
+.pagination .page-num:hover {
+  background-color: #47befe;
+  color: #fff;
+}
+
+.pagination .active {
+  background-color: #47befe;
+  color: #fff;
+}
+
+.num-next, .num-previous {
+  padding: 6px 15px;
+  margin: 0px 15px;
+  cursor: pointer;
+  border-radius: 3px;
+  font-weight: 400;
+}
+
+.num-next:hover, .num-previous:hover {
+  background-color: #47befe;
+  color: #fff;
+}

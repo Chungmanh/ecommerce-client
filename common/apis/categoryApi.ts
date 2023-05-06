@@ -4,6 +4,7 @@ export interface ICategory {
   _id: string;
   name: String;
   description: String;
+  avatar?: string;
   status?: Boolean;
 }
 

@@ -39,19 +39,19 @@ const Shop: NextPageWithLayout = () => {
 
   const handleDeleteProduct = async (id: string) => {
     Swal.fire({
-      title: 'Are you sure?',
-      text: "You won't be able to revert this!",
+      title: 'Bạn có chắc chắn?',
+      text: 'Xác nhận xóa sản phẩm này!',
       icon: 'warning',
       showCancelButton: true,
       confirmButtonColor: '#3085d6',
       cancelButtonColor: '#d33',
-      confirmButtonText: 'Yes, delete it!',
+      confirmButtonText: 'Xác nhận',
     }).then(async (result) => {
       if (result.isConfirmed) {
         const deleted = await deleteProduct(id);
         if (deleted && Object.keys(deleted).length !== 0) {
           const new_products = products.filter((product) => product._id !== id);
-          Swal.fire('Deleted!', 'Your file has been deleted.', 'success');
+          Swal.fire('Deleted!', 'Xóa thành công', 'success');
           setProducts(new_products);
         } else {
           Swal.fire('Error!', 'ko xoa dc.', 'error');

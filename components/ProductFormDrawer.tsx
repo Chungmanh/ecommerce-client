@@ -21,6 +21,7 @@ import {
   IProduct,
 } from '../common/apis/productApi';
 import { getAllCategory, ICategory } from '../common/apis/categoryApi';
+import { getAllTrademarksByUser } from '../common/apis/trademarkApi';
 import Swal from 'sweetalert2';
 
 interface Props {
@@ -37,6 +38,7 @@ const ProductFormDrawer: React.FC<Props> = ({
   const [avatar, setAvatar] = useState({ file: undefined, url: '' });
   const [product, setProduct] = useState<IProduct>({
     categoryId: '',
+    trademarkId: '',
     type: '',
     description: '',
     name: '',
@@ -45,12 +47,15 @@ const ProductFormDrawer: React.FC<Props> = ({
   });
 
   const [categories, setCategories] = useState<ICategory[]>([]);
+  const [trademarks, setTrademarks] = useState<any>([]);
+  console.log('trademarks: ', trademarks);
 
   const formik = useFormik({
     initialValues: {
       name: `${product.name}`,
       description: `${product.description}`,
       categoryId: `${product.categoryId}`,
+      trademarkId: `${product.trademarkId}`,
       type: `${product.type}`,
       price: product.price,
       quantity: product.quantity,
@@ -67,12 +72,14 @@ const ProductFormDrawer: React.FC<Props> = ({
         const created = await addProduct(product);
         if (created) {
           onClose();
+          setAvatar({ file: undefined, url: '' });
           Swal.fire({
             customClass: {
               container: 'my-swal',
             },
             icon: 'success',
-            title: 'Đăng ký thành công',
+            // title: 'Đăng ký thành công',
+            title: 'Thao tác thành công',
             showConfirmButton: false,
             timer: 1000,
           });
@@ -99,8 +106,6 @@ const ProductFormDrawer: React.FC<Props> = ({
 
   useEffect(() => {
     async function getProductDetail(id: string) {
-      // console.log('getProductDetail popopopopppppppppppppppppppppppppppp');
-
       if (id) {
         const product = await getProductById(id);
         console.log('product: ', product);
@@ -109,6 +114,7 @@ const ProductFormDrawer: React.FC<Props> = ({
       } else {
         setProduct({
           categoryId: '',
+          trademarkId: '',
           type: '',
           description: '',
           name: '',
@@ -132,7 +138,12 @@ const ProductFormDrawer: React.FC<Props> = ({
       const categories = await getAllCategory();
       setCategories(categories);
     }
+    async function getTrademarks() {
+      const trademarks = await getAllTrademarksByUser();
+      setTrademarks(trademarks);
+    }
     getCategories();
+    getTrademarks();
   }, []);
 
   useEffect(() => {
@@ -147,7 +158,7 @@ const ProductFormDrawer: React.FC<Props> = ({
         <DrawerOverlay />
         <DrawerContent>
           <DrawerCloseButton />
-          <DrawerHeader>Create your account</DrawerHeader>
+          <DrawerHeader>Cập nhật sản phẩm</DrawerHeader>
 
           <DrawerBody>
             <Box>
@@ -202,13 +213,25 @@ const ProductFormDrawer: React.FC<Props> = ({
                   </Select>
                 </FormControl>
                 <FormControl marginTop={'15px'}>
-                  <Input
+                  <Select
+                    placeholder="Thương hiệu"
+                    name={'trademarkId'}
+                    onChange={formik.handleChange}
+                    value={formik.values.trademarkId}
+                  >
+                    {trademarks?.map((trademark: any) => (
+                      <option key={trademark._id} value={trademark._id}>
+                        {trademark.name}
+                      </option>
+                    ))}
+                  </Select>
+                  {/* <Input
                     placeholder="Thương hiệu"
                     type={'text'}
                     name={'type'}
                     onChange={formik.handleChange}
                     value={formik.values.type}
-                  />
+                  /> */}
                 </FormControl>
                 <FormControl marginTop={'15px'}>
                   <Input

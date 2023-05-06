@@ -5,6 +5,7 @@ export interface IProduct {
   name: String;
   shopId?: String;
   categoryId: String;
+  trademarkId: String;
   price: number;
   description: String;
   quantity: number;
@@ -44,6 +45,20 @@ export const getAllProducts = async (): Promise<any[]> => {
       'content-type': 'multipart/form-data',
     },
   });
+};
+
+export const getProductsByQuery = async (query: {}): Promise<any> => {
+  const url = '/product/get-products-query';
+  return axiosClient.post(
+    url,
+    { query },
+    {
+      headers: {
+        // 'content-type': 'multipart/form-data',
+        'content-type': 'application/json',
+      },
+    }
+  );
 };
 
 export const getProductByIds = async (ids: string[]): Promise<any> => {

@@ -79,7 +79,10 @@ const Order = () => {
                   reloadPage={reloadPage}
                 />
                 <ItemInHistoryOrderCustomer orders={products.delivery} />
-                <ItemInHistoryOrderCustomer orders={products.completed} />
+                <ItemInHistoryOrderCustomer
+                  orders={products.completed}
+                  reloadPage={reloadPage}
+                />
                 <ItemInHistoryOrderCustomer
                   orders={products.cancelled}
                   reloadPage={reloadPage}
@@ -143,7 +146,10 @@ const Order = () => {
               </TabPanel>
               <TabPanel>
                 {products?.completed && products.completed.length !== 0 ? (
-                  <ItemInHistoryOrderCustomer orders={products.completed} />
+                  <ItemInHistoryOrderCustomer
+                    orders={products.completed}
+                    reloadPage={reloadPage}
+                  />
                 ) : (
                   <Box
                     sx={{

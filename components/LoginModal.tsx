@@ -18,6 +18,7 @@ import { getAllCartItem } from '../common/apis/cartApi';
 
 import Swal from 'sweetalert2';
 import { useDispatch } from 'react-redux';
+import { useRouter } from 'next/router';
 
 interface IProps {
   setIsLogin: Function;
@@ -27,9 +28,11 @@ interface IProps {
 const Login = (props: IProps) => {
   const { setIsLogin, onClose } = props;
   const dispatch = useDispatch();
+  const router = useRouter();
 
   const handleGetCart = async () => {
     const cart = await getAllCartItem();
+    localStorage.setItem('cart', JSON.stringify(cart));
     dispatch(addSuccess(cart.total));
   };
 
@@ -41,10 +44,16 @@ const Login = (props: IProps) => {
     onSubmit: async (values) => {
       try {
         dispatch(loginStart());
-        const { accessToken, ...user } = await login(values);
+        const { accessToken, refreshToken, ...user } = await login(values);
         localStorage.setItem('user', JSON.stringify(user));
         localStorage.setItem('accessToken', JSON.stringify(accessToken));
-        if (user) {
+        localStorage.setItem('refreshToken', JSON.stringify(refreshToken));
+        if (user && user.admin) {
+          await router.push('/admin');
+          router.reload();
+          onClose();
+        }
+        if (user && !user.admin) {
           dispatch(loginSuccess(user));
           handleGetCart();
           onClose();

@@ -1,6 +1,16 @@
-import { Box, Image, Button, Checkbox } from '@chakra-ui/react';
+import {
+  Box,
+  Image,
+  Button,
+  Checkbox,
+  Alert,
+  AlertIcon,
+  AlertTitle,
+  AlertDescription,
+} from '@chakra-ui/react';
 import Head from 'next/head';
 import { useEffect, useState } from 'react';
+import { addStart, addSuccess } from '../redux/cartSlice';
 import CartItem from '../components/CartComponents/CartItem';
 import OrderItem from '../components/CartComponents/OrderItem';
 import {
@@ -10,10 +20,12 @@ import {
   ICart,
 } from '../common/apis/cartApi';
 import { createOrder } from '../common/apis/orderApi';
+import { useDispatch } from 'react-redux';
 import { MdStorefront } from 'react-icons/md';
 import Swal from 'sweetalert2';
 
 const Cart = () => {
+  const dispatch = useDispatch();
   const [cart, setCart] = useState<any>();
   const [checkedItems, setCheckedItems] = useState<any>([]);
   const [isChanged, setIsChanged] = useState<boolean>(false);
@@ -21,7 +33,10 @@ const Cart = () => {
 
   const handleUpdateCart = async (productId: string, type: string) => {
     const updated = await updateCart(productId, type);
+    console.log('updated: ', updated);
+
     if (updated && Object.keys(updated).length !== 0) {
+      dispatch(addSuccess(updated.total));
       setIsChanged(!isChanged);
       await getCart();
     }
@@ -259,16 +274,18 @@ const Cart = () => {
   };
 
   const handlePayment = async () => {
-    const isSuccess = await createOrder(checkedItems);
-    console.log('isSuccess: ', isSuccess);
-    if (isSuccess) {
-      setCheckedItems([]);
-      Swal.fire({
-        icon: 'success',
-        title: 'Đặt hàng thành công',
-        showConfirmButton: false,
-        timer: 1000,
-      });
+    if (checkedItems.length !== 0) {
+      const isSuccess = await createOrder(checkedItems);
+      console.log('isSuccess: ', isSuccess);
+      if (isSuccess) {
+        setCheckedItems([]);
+        Swal.fire({
+          icon: 'success',
+          title: 'Đặt hàng thành công',
+          showConfirmButton: false,
+          timer: 1000,
+        });
+      }
     }
   };
 
@@ -451,6 +468,7 @@ const Cart = () => {
               size="lg"
               colorScheme="twitter"
               sx={{ width: '100%' }}
+              isDisabled={checkedItems.length === 0}
               onClick={handlePayment}
             >
               Thanh toán ngay

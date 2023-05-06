@@ -1,21 +1,45 @@
 import { Box, Avatar, Divider, Button, Text } from '@chakra-ui/react';
 import axios from 'axios';
 import Head from 'next/head';
+import { useEffect, useState } from 'react';
 import Stars from '../../components/rating/star';
 import { BsCartPlus } from 'react-icons/bs';
 import { addToCart } from '../../common/apis/cartApi';
 import { addStart, addSuccess } from '../../redux/cartSlice';
+import { onOpen } from '../../redux/actionSlice';
 import { useDispatch } from 'react-redux';
+import moment from 'moment';
 
 const ProductDetail = (props: any) => {
   const { product } = props;
   const dispatch = useDispatch();
+  const [quantity, setQuantity] = useState(1);
 
   const handleAddToCart = async (quantity: number = 1) => {
-    dispatch(addStart());
-    const success = await addToCart({ productId: product._id, quantity });
-    if (success) {
-      dispatch(addSuccess(success.total));
+    const user = JSON.parse(`${localStorage.getItem('user')}`);
+    if (user) {
+      dispatch(addStart());
+      const success = await addToCart({ productId: product._id, quantity });
+      // console.log('success: ', success);
+      if (success) {
+        dispatch(addSuccess(success.total));
+      }
+    } else {
+      dispatch(onOpen(true));
+    }
+  };
+
+  const handleBuyNow = async (quantity: number = 1) => {
+    const user = JSON.parse(`${localStorage.getItem('user')}`);
+    if (user) {
+      dispatch(addStart());
+      const success = await addToCart({ productId: product._id, quantity });
+      // console.log('success: ', success);
+      if (success) {
+        dispatch(addSuccess(success.total));
+      }
+    } else {
+      dispatch(onOpen(true));
     }
   };
   console.log('product: ', product);
@@ -63,7 +87,7 @@ const ProductDetail = (props: any) => {
               >
                 Thương hiệu:{' '}
                 <span style={{ color: 'rgb(13, 92, 182)' }}>
-                  Johnson's Baby
+                  {product?.trademarkName?.name || 'No Brand'}
                 </span>
               </Box>
               <Box
@@ -86,7 +110,8 @@ const ProductDetail = (props: any) => {
                     fontSize: '15px',
                   }}
                 >
-                  (Xem 802 đánh giá) | Đã bán 5000+
+                  (Xem {product?.reviews?.length || 0} đánh giá)
+                  {/* | Đã bán 5000+ */}
                 </Box>
               </Box>
             </Box>
@@ -110,7 +135,7 @@ const ProductDetail = (props: any) => {
                 {product.price} ₫
               </Box>
             </Box>
-            <Box
+            {/* <Box
               sx={{
                 display: 'flex',
                 fontSize: '.875rem',
@@ -165,7 +190,7 @@ const ProductDetail = (props: any) => {
                   Xanh
                 </Button>
               </Box>
-            </Box>
+            </Box> */}
             <Box
               sx={{
                 display: 'flex',
@@ -185,6 +210,7 @@ const ProductDetail = (props: any) => {
               </Box>
               <Box sx={{ display: 'flex' }}>
                 <Box
+                  as="button"
                   sx={{
                     boxSizing: 'border-box',
                     border: '1px solid rgba(0,0,0,.09)',
@@ -193,6 +219,8 @@ const ProductDetail = (props: any) => {
                     height: '32px',
                     textAlign: 'center',
                   }}
+                  disabled={quantity <= 1}
+                  onClick={() => setQuantity(quantity - 1)}
                 >
                   -
                 </Box>
@@ -208,9 +236,10 @@ const ProductDetail = (props: any) => {
                     alignItems: 'center',
                   }}
                 >
-                  5
+                  {quantity}
                 </Box>
                 <Box
+                  as="button"
                   sx={{
                     boxSizing: 'border-box',
                     border: '1px solid rgba(0,0,0,.09)',
@@ -219,6 +248,8 @@ const ProductDetail = (props: any) => {
                     height: '32px',
                     textAlign: 'center',
                   }}
+                  disabled={quantity >= product.quantity}
+                  onClick={() => setQuantity(quantity + 1)}
                 >
                   +
                 </Box>
@@ -243,6 +274,7 @@ const ProductDetail = (props: any) => {
                   color: '#fff',
                   height: '48px',
                 }}
+                onClick={() => handleBuyNow()}
               >
                 Mua ngay
               </Button>
@@ -301,42 +333,62 @@ const ProductDetail = (props: any) => {
             >
               Đánh Giá - Nhận Xét Từ Khách Hàng
             </Text>
-            <Box
-              sx={{
-                display: 'flex',
-                borderTop: '1px solid rgb(242, 242, 242)',
-                padding: '32px 48px',
-              }}
-            >
-              <Box
-                sx={{
-                  flex: 1,
-                }}
-              >
+            {product?.reviews &&
+              product?.reviews.length !== 0 &&
+              product?.reviews?.map((review: any, index: number) => (
                 <Box
                   sx={{
                     display: 'flex',
+                    borderTop: '1px solid rgb(242, 242, 242)',
+                    padding: '32px 48px',
                   }}
+                  key={index}
                 >
-                  <Avatar
-                    name="Sasuke Uchiha"
-                    src="https://bit.ly/broken-link"
-                  />
-                  <Box>
-                    <Text>Thuỳ Dương</Text>
-                    <Text>Đã tham gia 2 năm</Text>
+                  <Box
+                    sx={{
+                      flex: 1,
+                    }}
+                  >
+                    <Box
+                      sx={{
+                        display: 'flex',
+                      }}
+                    >
+                      <Avatar
+                        name="Sasuke Uchiha"
+                        src="https://bit.ly/broken-link"
+                      />
+                      <Box sx={{ marginLeft: '12px', fontSize: '.75rem' }}>
+                        <Text
+                          sx={{
+                            color: 'rgba(0,0,0,.87)',
+                          }}
+                        >
+                          {review?.userId?.username}
+                        </Text>
+                        <Text
+                          sx={{
+                            // marginTop: '0.75rem',
+                            color: 'rgba(0,0,0,.54)',
+                          }}
+                        >
+                          {moment(review?.createdAt).format('DD/MM/YYYY')}
+                        </Text>
+                        {/* <Text>Đã tham gia 2 năm</Text> */}
+                      </Box>
+                    </Box>
+                    {/* <Text>Ngày nhận xét: 2023-01-08 16:00</Text> */}
+                  </Box>
+                  <Box
+                    sx={{
+                      flex: 2,
+                    }}
+                  >
+                    <Stars star={review?.vote || 5} size={'14px'} />
+                    <Text>{review?.comment || 5}</Text>
                   </Box>
                 </Box>
-                <Text>Ngày nhận xét: 2023-01-08 16:00</Text>
-              </Box>
-              <Box
-                sx={{
-                  flex: 2,
-                }}
-              >
-                <Stars star={3} size={'14px'} />
-              </Box>
-            </Box>
+              ))}
           </Box>
         </Box>
       </Box>

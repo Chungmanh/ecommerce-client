@@ -3,7 +3,11 @@ import Link from 'next/link';
 import { HiOutlineHome, HiOutlineUser } from 'react-icons/hi';
 import { RiProductHuntLine } from 'react-icons/ri';
 import { ClassNames } from '@emotion/react';
+import { getAllCategory, ICategory } from '../../common/apis/categoryApi';
 import ItemMenu from './ItemMenuSidebarHone';
+import { useEffect, useState } from 'react';
+import { insertQueryCategoryId } from '../../redux/querySlice';
+import { useSelector, useDispatch } from 'react-redux';
 
 const menu_data = [
   {
@@ -77,6 +81,21 @@ const menu_data = [
 ];
 
 const Sidebar = () => {
+  const dispatch = useDispatch();
+  const [categories, setCategories] = useState<ICategory[]>([]);
+  const query = useSelector((state: any) => state.search.query);
+
+  const handleInsertQuery = (value: string) => {
+    dispatch(insertQueryCategoryId(value));
+  };
+
+  useEffect(() => {
+    async function getCategories() {
+      const categories = await getAllCategory();
+      setCategories(categories);
+    }
+    getCategories();
+  }, []);
   return (
     <Box sx={{ padding: '0px 16px' }}>
       <Box
@@ -99,10 +118,19 @@ const Sidebar = () => {
         >
           <Text>Danh mục</Text>
         </Box>
-        {menu_data &&
-          menu_data.map((item, index) => (
-            <Box key={index}>
-              <ItemMenu image={item.image} title={item.title} />
+        {categories &&
+          categories.map((item, index) => (
+            <Box
+              key={index}
+              onClick={() => {
+                handleInsertQuery(item._id);
+              }}
+            >
+              <ItemMenu
+                image={item.avatar}
+                title={item.name}
+                isActive={query.categoryId === item._id}
+              />
             </Box>
           ))}
       </Box>

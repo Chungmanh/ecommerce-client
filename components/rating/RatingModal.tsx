@@ -19,7 +19,7 @@ import { addReview } from '../../common/apis/reviewApi';
 import { getProductById, IProduct } from '../../common/apis/productApi';
 
 const RatingModal = (props: any) => {
-  const { isOpen, onClose, productId } = props;
+  const { isOpen, onClose, productId, reloadPage } = props;
   const [product, setProduct] = useState<IProduct>();
   const [star, setStar] = useState(5);
 
@@ -44,6 +44,7 @@ const RatingModal = (props: any) => {
 
         if (created) {
           formik.resetForm();
+          await reloadPage();
           onClose();
           Swal.fire({
             customClass: {

@@ -59,16 +59,20 @@ axiosClient.interceptors.response.use(
       }
     }
 
-    // if (name === 'Authenticated' && message === 'You are not authenticated') {
-    //   return false;
-    // }
+    if (name === 'Authenticated' && message === 'You are not authenticated') {
+      return false;
+    }
 
     throw error;
   }
 );
 
 const refreshToken = async () => {
-  const accessToken = await axiosClient.get('/auth/refreshToken');
+  const refreshToken = JSON.parse(`${localStorage?.getItem('refreshToken')}`);
+  const accessToken = await axiosClient.post(
+    '/auth/refreshToken',
+    refreshToken
+  );
   return accessToken;
 };
 

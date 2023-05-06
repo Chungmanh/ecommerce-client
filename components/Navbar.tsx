@@ -21,29 +21,58 @@ import { FaAngleDown } from 'react-icons/fa';
 import { HiOutlineHome, HiOutlineUser } from 'react-icons/hi';
 import Link from 'next/link';
 import { loginStart, loginSuccess } from '../redux/authSlice';
+import { addStart, addSuccess } from '../redux/cartSlice';
+import { insertQuerySearch } from '../redux/querySlice';
+import { onOpen } from '../redux/actionSlice';
+import { getAllCartItem } from '../common/apis/cartApi';
 import ModalComponent from './Modal';
 import CartComponent from './Cart';
 import { useSelector, useDispatch } from 'react-redux';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
 
 const Navbar = () => {
-  const { isOpen, onOpen, onClose } = useDisclosure();
+  // const { isOpen, onOpen, onClose } = useDisclosure();
+  const [input, setInput] = useState('');
   const dispatch = useDispatch();
   const router = useRouter();
+
+  const handleOnOpen = () => {
+    dispatch(onOpen(true));
+  };
+  const handleOnClose = () => {
+    dispatch(onOpen(false));
+  };
+
   const user = useSelector((state: any) => state.auth.login.currentUser);
   const totalCart = useSelector((state: any) => state.cart.cart.currentTotal);
+  const isOpen1 = useSelector((state: any) => state.action.modal.isOpen);
+
+  const handleGetCart = async () => {
+    const cart = await getAllCartItem();
+    localStorage.setItem('cart', JSON.stringify(cart));
+    dispatch(addSuccess(cart.total));
+  };
 
   const handleLogout = async () => {
-    await localStorage.removeItem('user');
+    // await localStorage.removeItem('cart');
+    // await localStorage.removeItem('user');
+    await localStorage.clear();
     await router.push('/');
     router.reload();
   };
 
+  const handleSubmitSearch = () => {
+    dispatch(insertQuerySearch(input));
+    // console.log('input: ', input);
+  };
+
   useEffect(() => {
     const user = JSON.parse(`${localStorage.getItem('user')}`);
+    // const cart = JSON.parse(`${localStorage.getItem('cart')}`);
     if (user) {
       dispatch(loginSuccess(user));
+      handleGetCart();
     }
   }, []);
 
@@ -68,9 +97,16 @@ const Navbar = () => {
               border={'none'}
               boxShadow={'none'}
               _focus={{ boxShadow: 'none' }}
+              onChange={(e) => {
+                setInput(e.target.value);
+              }}
             />
             <InputRightElement width="max-content">
-              <Button color={'rgb(10, 104, 255)'} padding={'0px 10px'}>
+              <Button
+                color={'rgb(10, 104, 255)'}
+                padding={'0px 10px'}
+                onClick={handleSubmitSearch}
+              >
                 Tìm Kiếm
               </Button>
             </InputRightElement>
@@ -124,7 +160,6 @@ const Navbar = () => {
                   <MenuItem>
                     <Link href={'/order'}>Đơn mua</Link>
                   </MenuItem>
-                  <MenuItem>Lịch sử mua hàng</MenuItem>
                   <MenuItem>Sản phẩm yêu thích</MenuItem>
                   <MenuItem onClick={handleLogout}>Đăng xuất</MenuItem>
                 </MenuList>
@@ -132,8 +167,10 @@ const Navbar = () => {
             </Box>
           ) : (
             <ModalComponent
-              isOpen={isOpen}
-              onClose={onClose}
+              // isOpen={isOpen}
+              isOpen={isOpen1}
+              // onClose={onClose}
+              onClose={handleOnClose}
               component={
                 <Box
                   display={'flex'}
@@ -142,7 +179,8 @@ const Navbar = () => {
                   borderRadius={'8px'}
                   cursor={'pointer'}
                   _hover={{ backgroundColor: 'rgba(39, 39, 42, 0.12)' }}
-                  onClick={onOpen}
+                  // onClick={onOpen}
+                  onClick={handleOnOpen}
                 >
                   <HiOutlineUser />
                   <Text style={{ whiteSpace: 'nowrap' }}>Tài khoản</Text>
@@ -186,13 +224,13 @@ const Navbar = () => {
           </Box>
         </Box>
       </Box>
-      <Box sx={{ display: 'flex', fontSize: '14px', marginTop: '5px' }}>
+      {/* <Box sx={{ display: 'flex', fontSize: '14px', marginTop: '5px' }}>
         <Text paddingRight={'10px'}>Dép</Text>
         <Text paddingRight={'10px'}>Áo Khoác</Text>
         <Text paddingRight={'10px'}>Áo Croptop</Text>
         <Text paddingRight={'10px'}>Túi Xách Nữ</Text>
         <Text paddingRight={'10px'}>Áo Phông</Text>
-      </Box>
+      </Box> */}
     </Box>
   );
 };
