@@ -1,18 +1,21 @@
 import {
   Box,
   Image,
+  Text,
   Button,
   Checkbox,
   Alert,
   AlertIcon,
   AlertTitle,
   AlertDescription,
+  useDisclosure,
 } from '@chakra-ui/react';
 import Head from 'next/head';
 import { useEffect, useState } from 'react';
 import { addStart, addSuccess } from '../redux/cartSlice';
 import CartItem from '../components/CartComponents/CartItem';
 import OrderItem from '../components/CartComponents/OrderItem';
+import OrderModal from '../components/CartComponents/OrderModal';
 import {
   getAllCartItem,
   updateCart,
@@ -26,6 +29,7 @@ import Swal from 'sweetalert2';
 
 const Cart = () => {
   const dispatch = useDispatch();
+  const { isOpen, onOpen, onClose } = useDisclosure();
   const [cart, setCart] = useState<any>();
   const [checkedItems, setCheckedItems] = useState<any>([]);
   const [isChanged, setIsChanged] = useState<boolean>(false);
@@ -33,7 +37,6 @@ const Cart = () => {
 
   const handleUpdateCart = async (productId: string, type: string) => {
     const updated = await updateCart(productId, type);
-    console.log('updated: ', updated);
 
     if (updated && Object.keys(updated).length !== 0) {
       dispatch(addSuccess(updated.total));
@@ -43,12 +46,12 @@ const Cart = () => {
   };
 
   const handleRemoveItem = async (shop_name: string, productId: string) => {
-    // const deleted = await deleteCartItem(productId);
-    // await getCart();
+    await deleteCartItem(productId);
 
     const isExistsShop = checkedItems.find(
       (checkedItem: any) => checkedItem.shop_name === shop_name
     );
+
     if (isExistsShop) {
       const isExistsItem = isExistsShop.items.find(
         (item: string) => item === productId
@@ -61,17 +64,18 @@ const Cart = () => {
         const new_checkedItems = checkedItems.filter(
           (checkedItem: any) => checkedItem.shop_name !== shop_name
         );
+
         if (new_items.length !== 0) {
-          await deleteCartItem(productId);
           setCheckedItems([
             ...new_checkedItems,
             { shop_name, items: new_items },
           ]);
         } else {
-          await deleteCartItem(productId);
           setCheckedItems([...new_checkedItems]);
         }
       }
+    } else {
+      await getCart();
     }
   };
 
@@ -273,9 +277,9 @@ const Cart = () => {
     }
   };
 
-  const handlePayment = async () => {
+  const handlePayment = async (value: any) => {
     if (checkedItems.length !== 0) {
-      const isSuccess = await createOrder(checkedItems);
+      const isSuccess = await createOrder(checkedItems, value);
       console.log('isSuccess: ', isSuccess);
       if (isSuccess) {
         setCheckedItems([]);
@@ -335,14 +339,14 @@ const Cart = () => {
                 color: '#222',
                 backgroundColor: '#fff',
                 borderBottom: '1px solid #e5e5e5',
-                padding: '24px 24px 10px',
+                padding: '24px 18px 10px',
                 marginBottom: '10px',
                 // position: 'sticky',
                 // top: 0,s
                 // zIndex: 2,
               }}
             >
-              Tóm Tắt Mặt Hàng(2)
+              <Text mb={2}>Tóm Tắt Mặt Hàng(2)</Text>
               <Checkbox
                 isIndeterminate={isIndeterminateAllShop()}
                 isChecked={isCheckedAllShop()}
@@ -459,7 +463,7 @@ const Cart = () => {
               <Box
                 as="span"
                 sx={{ color: '#ee4d2d' }}
-                onClick={handleGetTotalPriceInCheckedItems}
+                // onClick={handleGetTotalPriceInCheckedItems}
               >
                 {checkedItems.length !== 0 ? totalPriceChanged : 0}₫
               </Box>
@@ -469,13 +473,18 @@ const Cart = () => {
               colorScheme="twitter"
               sx={{ width: '100%' }}
               isDisabled={checkedItems.length === 0}
-              onClick={handlePayment}
+              onClick={onOpen}
             >
               Thanh toán ngay
             </Button>
           </Box>
         </Box>
       </Box>
+      <OrderModal
+        isOpen={isOpen}
+        onClose={onClose}
+        handlePayment={handlePayment}
+      />
     </div>
   );
 };

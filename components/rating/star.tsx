@@ -3,14 +3,15 @@ import { AiFillStar, AiOutlineStar } from 'react-icons/ai';
 
 interface StarProps {
   star: number;
-  size: string;
+  size?: string;
 }
 
 const Stars = (props: StarProps) => {
   const { star, size } = props;
+  const starRound = Math.round(star);
 
   const stars = [];
-  for (let i = 0; i < star; i++) {
+  for (let i = 0; i < starRound; i++) {
     stars.push(
       <AiFillStar
         key={i}
@@ -20,11 +21,11 @@ const Stars = (props: StarProps) => {
     );
   }
 
-  if (star < 5) {
-    for (let i = 0; i < 5 - star; i++) {
+  if (starRound < 5) {
+    for (let i = 0; i < 5 - starRound; i++) {
       stars.push(
         <AiOutlineStar
-          key={star + i}
+          key={starRound + i}
           style={{ width: size, height: size }}
           color={'gold'}
         />

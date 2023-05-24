@@ -11,10 +11,6 @@ import {
   MenuButton,
   MenuList,
   MenuItem,
-  MenuItemOption,
-  MenuGroup,
-  MenuOptionGroup,
-  MenuDivider,
 } from '@chakra-ui/react';
 import { FiShoppingCart } from 'react-icons/fi';
 import { FaAngleDown } from 'react-icons/fa';
@@ -31,9 +27,15 @@ import { useSelector, useDispatch } from 'react-redux';
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
 
+import PopoverSearch from './Home/PopoverSearch';
+import { getProductByKeyword } from '../common/apis/productApi';
+
 const Navbar = () => {
   // const { isOpen, onOpen, onClose } = useDisclosure();
   const [input, setInput] = useState('');
+  const [products, setProducts] = useState([]);
+  console.log('products: ', products);
+
   const dispatch = useDispatch();
   const router = useRouter();
 
@@ -42,6 +44,16 @@ const Navbar = () => {
   };
   const handleOnClose = () => {
     dispatch(onOpen(false));
+  };
+
+  const handleChangeInput = async (value: string) => {
+    setInput(value);
+    const products = await getProductByKeyword(value);
+    setProducts(products);
+
+    // setTimeout(()=>{
+
+    // }, 1000)
   };
 
   const user = useSelector((state: any) => state.auth.login.currentUser);
@@ -63,6 +75,7 @@ const Navbar = () => {
   };
 
   const handleSubmitSearch = () => {
+    setProducts([]);
     dispatch(insertQuerySearch(input));
     // console.log('input: ', input);
   };
@@ -90,7 +103,7 @@ const Navbar = () => {
       <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
         <Box sx={{ width: '60%' }}>
           <InputGroup size="md">
-            <Input
+            {/* <Input
               placeholder="Bạn tìm gì hôm nay"
               backgroundColor={'#fff'}
               color={'#333'}
@@ -100,6 +113,27 @@ const Navbar = () => {
               onChange={(e) => {
                 setInput(e.target.value);
               }}
+            /> */}
+            <PopoverSearch
+              Trigger={
+                <Input
+                  placeholder="Bạn tìm gì hôm nay"
+                  backgroundColor={'#fff'}
+                  color={'#333'}
+                  border={'none'}
+                  boxShadow={'none'}
+                  _focus={{ boxShadow: 'none' }}
+                  onChange={(e) => {
+                    handleChangeInput(e.target.value);
+                  }}
+                  onBlur={() => {
+                    setProducts([]);
+                  }}
+                />
+              }
+              isOpen={products && products.length > 0}
+              products={products}
+              setProducts={setProducts}
             />
             <InputRightElement width="max-content">
               <Button
@@ -146,16 +180,22 @@ const Navbar = () => {
                   rightIcon={<FaAngleDown color="#fff" />}
                 >
                   <Box display={'flex'} alignItems={'center'} color={'#fff'}>
-                    <Avatar size="sm" name={user.username} src="" />{' '}
+                    <Avatar
+                      size="sm"
+                      name={user.username}
+                      src={user.avatar || ''}
+                    />{' '}
                     <Text style={{ whiteSpace: 'nowrap', marginLeft: '5px' }}>
                       {user.username}
                     </Text>
                   </Box>
                 </MenuButton>
                 <MenuList>
-                  <MenuItem>thông tin cá nhân</MenuItem>
                   <MenuItem>
-                    <Link href={'/shop'}>Quản lý cửa hàng</Link>
+                    <Link href={'/me'}>Thông tin cá nhân</Link>
+                  </MenuItem>
+                  <MenuItem>
+                    <Link href={'/shop/home'}>Quản lý cửa hàng</Link>
                   </MenuItem>
                   <MenuItem>
                     <Link href={'/order'}>Đơn mua</Link>

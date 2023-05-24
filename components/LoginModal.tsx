@@ -19,6 +19,7 @@ import { getAllCartItem } from '../common/apis/cartApi';
 import Swal from 'sweetalert2';
 import { useDispatch } from 'react-redux';
 import { useRouter } from 'next/router';
+import * as Yup from 'yup';
 
 interface IProps {
   setIsLogin: Function;
@@ -41,6 +42,12 @@ const Login = (props: IProps) => {
       telephone: '',
       password: '',
     },
+    validationSchema: Yup.object({
+      telephone: Yup.string()
+        .max(10, 'Số điện thoại chưa đúng định dạng')
+        .required('Chưa nhập số điện thoại'),
+      password: Yup.string().required('Chưa nhập mật khẩu'),
+    }),
     onSubmit: async (values) => {
       try {
         dispatch(loginStart());
@@ -50,7 +57,7 @@ const Login = (props: IProps) => {
         localStorage.setItem('refreshToken', JSON.stringify(refreshToken));
         if (user && user.admin) {
           await router.push('/admin');
-          router.reload();
+          // router.reload();
           onClose();
         }
         if (user && !user.admin) {
@@ -92,6 +99,11 @@ const Login = (props: IProps) => {
               onChange={formik.handleChange}
               value={formik.values.telephone}
             />
+            {formik.touched.telephone && formik.errors.telephone ? (
+              <span style={{ fontSize: '12px', color: 'red' }}>
+                {formik.errors.telephone}
+              </span>
+            ) : null}
           </FormControl>
           <FormControl marginTop={'20px'}>
             <Input
@@ -101,6 +113,11 @@ const Login = (props: IProps) => {
               onChange={formik.handleChange}
               value={formik.values.password}
             />
+            {formik.touched.password && formik.errors.password ? (
+              <span style={{ fontSize: '12px', color: 'red' }}>
+                {formik.errors.password}
+              </span>
+            ) : null}
           </FormControl>
           <Button
             marginTop={'20px'}

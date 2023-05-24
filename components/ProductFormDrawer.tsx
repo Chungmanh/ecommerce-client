@@ -48,21 +48,19 @@ const ProductFormDrawer: React.FC<Props> = ({
 
   const [categories, setCategories] = useState<ICategory[]>([]);
   const [trademarks, setTrademarks] = useState<any>([]);
-  console.log('trademarks: ', trademarks);
 
   const formik = useFormik({
     initialValues: {
       name: `${product.name}`,
       description: `${product.description}`,
       categoryId: `${product.categoryId}`,
-      trademarkId: `${product.trademarkId}`,
+      trademarkId: `${product.trademarkId || ''}`,
       type: `${product.type}`,
       price: product.price,
       quantity: product.quantity,
     },
     enableReinitialize: true,
     onSubmit: async (values) => {
-      // console.log('values: ', { ...values, id: productId });
       try {
         const product: IProduct = {
           ...values,
@@ -104,31 +102,30 @@ const ProductFormDrawer: React.FC<Props> = ({
     setAvatar({ file, url: preview });
   };
 
-  useEffect(() => {
-    async function getProductDetail(id: string) {
-      if (id) {
-        const product = await getProductById(id);
-        console.log('product: ', product);
-        setProduct(product);
-        setAvatar({ ...avatar, url: `${product.avatar}` });
-      } else {
-        setProduct({
-          categoryId: '',
-          trademarkId: '',
-          type: '',
-          description: '',
-          name: '',
-          avatar: '',
-          price: 0,
-          quantity: 0,
-        });
-        setAvatar({ ...avatar, url: '' });
-      }
+  async function getProductDetail(id: string) {
+    if (id) {
+      const product = await getProductById(id);
+      console.log('product: ', product);
+      setProduct(product);
+      setAvatar({ ...avatar, url: `${product.avatar}` });
+    } else {
+      setProduct({
+        categoryId: '',
+        trademarkId: '',
+        type: '',
+        description: '',
+        name: '',
+        avatar: '',
+        price: 0,
+        quantity: 0,
+      });
+      setAvatar({ ...avatar, url: '' });
     }
+  }
 
+  useEffect(() => {
     if (!isOpen) {
       formik.resetForm();
-      console.log('reset: ', !isOpen);
     }
     getProductDetail(productId);
   }, [isOpen]);

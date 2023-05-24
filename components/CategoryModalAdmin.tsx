@@ -1,17 +1,4 @@
 import {
-  Box,
-  Table,
-  Thead,
-  Tbody,
-  Tfoot,
-  Tr,
-  Th,
-  Td,
-  TableCaption,
-  TableContainer,
-  IconButton,
-  useDisclosure,
-  Badge,
   Button,
   Select,
   Modal,
@@ -91,18 +78,9 @@ const CategoryModal: React.FC<IProps> = ({
   async function getCategoryDetail(id: string) {
     if (id) {
       const category = await getCategoryById(id);
-      // console.log('category: ', category);
       setCategory(category);
       setAvatar({ ...avatar, url: `${category.avatar}` });
     }
-    //  else {
-    //   setCategory({
-    //     name: '',
-    //     description: '',
-    //     avatar: '',
-    //   });
-    //   setAvatar({ ...avatar, url: '' });
-    // }
   }
 
   useEffect(() => {

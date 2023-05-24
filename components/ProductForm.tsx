@@ -22,6 +22,7 @@ const ProductForm = () => {
       name: '',
       description: '',
       categoryId: '',
+      trademarkId: '',
       type: '',
       price: 0,
       quantity: 0,

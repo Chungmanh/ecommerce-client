@@ -19,6 +19,11 @@ const ItemInHistoryOrderCustomer = (props: any) => {
     onOpen();
   };
 
+  // const handleShRatingItem = async (productId: string) => {
+  //   setRatingCurrent(productId);
+  //   onOpen();
+  // };
+
   const handleCancelOrder = async (orderId: string) => {
     const canceled = await cancelOrder(orderId);
     if (canceled) {

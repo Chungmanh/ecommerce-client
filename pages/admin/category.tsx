@@ -14,20 +14,6 @@ import {
   useDisclosure,
   Badge,
   Button,
-  Select,
-  Modal,
-  ModalOverlay,
-  ModalContent,
-  ModalHeader,
-  ModalFooter,
-  ModalBody,
-  ModalCloseButton,
-  FormControl,
-  FormLabel,
-  Input,
-  Radio,
-  RadioGroup,
-  Stack,
 } from '@chakra-ui/react';
 import Head from 'next/head';
 import TableOrder from '../../components/TableOrder';

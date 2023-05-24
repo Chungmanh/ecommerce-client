@@ -12,6 +12,11 @@ import {
   useDisclosure,
   Badge,
   Button,
+  Tabs,
+  TabList,
+  TabPanels,
+  Tab,
+  TabPanel,
 } from '@chakra-ui/react';
 import Head from 'next/head';
 import CategoryModal from '../../components/CategoryModalAdmin';
@@ -19,27 +24,41 @@ import { MdStorefront } from 'react-icons/md';
 import { IoAdd } from 'react-icons/io5';
 import { BsTrash3 } from 'react-icons/bs';
 import { CiEdit } from 'react-icons/ci';
-import { getAllUsers } from '../../common/admin/userApi';
+import {
+  getAllProducts,
+  getProductsByQueryV2,
+  changeStatus,
+} from '../../common/admin/productApi';
 import { useState, useEffect } from 'react';
 import LayoutAdmin from '../../components/LayoutAdmin';
+import TableProductComponent from '../../components/Admin/TableProduct';
 import Swal from 'sweetalert2';
 
 const Product = () => {
-  const [users, setUsers] = useState<any[]>([]);
+  const [products, setProducts] = useState<any[]>([]);
+  const [status, setStatus] = useState<number>(1);
 
   const reloadPage = async () => {
-    await getUsers();
+    await getProducts();
   };
 
-  async function getUsers() {
-    const listUsers = await getAllUsers();
-    setUsers(listUsers);
+  async function getProducts() {
+    const listProducts = await getProductsByQueryV2({ status });
+    setProducts(listProducts);
   }
 
+  const handlechangeStatus = async (productId: string, status: number) => {
+    // console.log('productId: ', productId, status);
+
+    const updated = await changeStatus(productId, status);
+    if (updated) {
+      reloadPage();
+    }
+  };
   useEffect(() => {
     console.log('run useEffect');
-    getUsers();
-  }, []);
+    getProducts();
+  }, [status]);
 
   return (
     <div>
@@ -49,80 +68,65 @@ const Product = () => {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <Box sx={{ padding: '20px 0px 50px 0px' }}>
-        <Box display={'flex'} sx={{ margin: '0 auto' }}>
-          <TableContainer>
-            <Table variant="simple">
-              <TableCaption>Thông tin danh sách người dùng</TableCaption>
-              <Thead>
-                <Tr>
-                  <Th textAlign={'center'}>STT</Th>
-                  <Th textAlign={'center'}>Tên tài khoản</Th>
-                  <Th textAlign={'center'}>Ảnh</Th>
-                  <Th textAlign={'center'}>Địa chỉ</Th>
-                  <Th textAlign={'center'}>SĐT</Th>
-                  <Th textAlign={'center'}>Trạng thái</Th>
-                  <Th textAlign={'center'}>Thao tác</Th>
-                </Tr>
-              </Thead>
-              <Tbody>
-                {users &&
-                  users?.length > 0 &&
-                  users?.map((user, index) => (
-                    <Tr key={user._id}>
-                      <Td>{index + 1}</Td>
-                      <Td>{user?.username || ''}</Td>
-                      <Td>
-                        <img
-                          src={`${user?.avatar}` || ''}
-                          style={{
-                            width: '50px',
-                            height: '50px',
-                            objectFit: 'cover',
-                          }}
-                        />
-                      </Td>
-                      <Td>{user?.address || ''}</Td>
-                      <Td>{user?.telephone || ''}</Td>
-                      <Td textAlign={'center'}>
-                        {user?.status ? (
-                          <Badge
-                            textTransform={'capitalize'}
-                            colorScheme="green"
-                          >
-                            Active
-                          </Badge>
-                        ) : (
-                          <Badge textTransform={'capitalize'} colorScheme="red">
-                            InActive
-                          </Badge>
-                        )}
-                      </Td>
-                      <Td>
-                        <Box
-                          sx={{
-                            display: 'flex',
-                            justifyContent: 'space-between',
-                          }}
-                        >
-                          <CiEdit
-                            size={18}
-                            style={{
-                              cursor: 'pointer',
-                            }}
-                          />
-                          <BsTrash3
-                            size={16}
-                            style={{
-                              cursor: 'pointer',
-                            }}
-                          />
-                        </Box>
-                      </Td>
-                    </Tr>
-                  ))}
-              </Tbody>
-            </Table>
-          </TableContainer>
+        <Box display={''} sx={{ margin: '0 auto' }}>
+          <Tabs variant="soft-rounded" colorScheme="green">
+            <TabList>
+              <Tab
+                onClick={() => {
+                  setStatus(0);
+                }}
+              >
+                Tất cả
+              </Tab>
+              <Tab
+                onClick={() => {
+                  setStatus(1);
+                }}
+              >
+                Chưa duyệt
+              </Tab>
+              <Tab
+                onClick={() => {
+                  setStatus(2);
+                }}
+              >
+                Đã duyệt
+              </Tab>
+              <Tab
+                onClick={() => {
+                  setStatus(3);
+                }}
+              >
+                Đã Loại
+              </Tab>
+            </TabList>
+            <TabPanels>
+              <TabPanel>
+                <TableProductComponent
+                  products={products}
+                  handlechangeStatus={handlechangeStatus}
+                />
+              </TabPanel>
+              <TabPanel>
+                <TableProductComponent
+                  products={products}
+                  handlechangeStatus={handlechangeStatus}
+                />
+              </TabPanel>
+              <TabPanel>
+                <TableProductComponent
+                  products={products}
+                  handlechangeStatus={handlechangeStatus}
+                />
+              </TabPanel>
+              <TabPanel>
+                <TableProductComponent
+                  products={products}
+                  handlechangeStatus={handlechangeStatus}
+                />
+              </TabPanel>
+            </TabPanels>
+          </Tabs>
         </Box>
       </Box>
     </div>

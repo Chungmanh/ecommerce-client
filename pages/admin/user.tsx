@@ -11,6 +11,7 @@ import {
   TableContainer,
   useDisclosure,
   Badge,
+  Avatar,
   Button,
 } from '@chakra-ui/react';
 import Head from 'next/head';
@@ -26,6 +27,8 @@ import Swal from 'sweetalert2';
 
 const User = () => {
   const [users, setUsers] = useState<any[]>([]);
+
+  console.log('users: ', users);
 
   const reloadPage = async () => {
     await getUsers();
@@ -72,19 +75,16 @@ const User = () => {
                       <Td>{index + 1}</Td>
                       <Td>{user?.username || ''}</Td>
                       <Td>
-                        <img
-                          src={`${user?.avatar}` || ''}
-                          style={{
-                            width: '50px',
-                            height: '50px',
-                            objectFit: 'cover',
-                          }}
+                        <Avatar
+                          name={user?.username || ''}
+                          src={`${user?.avatar || ''}`}
                         />
+                        {/* '/icon-menu/user-avatar.png' */}
                       </Td>
                       <Td>{user?.address || ''}</Td>
                       <Td>{user?.telephone || ''}</Td>
                       <Td textAlign={'center'}>
-                        {user?.status ? (
+                        {!user?.status ? (
                           <Badge
                             textTransform={'capitalize'}
                             colorScheme="green"

@@ -21,6 +21,7 @@ const Home: NextPage = () => {
   const router = useRouter();
   const [data, setData] = useState<any>();
   const query = useSelector((state: any) => state.search.query);
+  console.log('query: ', query);
 
   async function queryProduct(query: {}) {
     const data = await getProductsByQuery(query);
@@ -43,7 +44,8 @@ const Home: NextPage = () => {
 
   useEffect(() => {
     queryProduct(query);
-  }, [query]);
+    // }, [query]);
+  }, [JSON.stringify(query)]);
 
   const handleClickProduct = async (id: string) => {
     await router.push(`/product/${id}`);
@@ -98,6 +100,7 @@ const Home: NextPage = () => {
                       name={product.name}
                       image={product.avatar}
                       price={product.price}
+                      star={product.star}
                     />
                   </Box>
                 ))

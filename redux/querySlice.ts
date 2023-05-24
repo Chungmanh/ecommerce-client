@@ -5,17 +5,26 @@ const querySlice = createSlice({
   initialState: {
     query: {
       categoryId: '',
+      trademarkId: '',
       name: '',
       sort: {},
-      limit: 6,
+      limit: 18,
+      // limit: 1,
       skip: 0,
-      // price: [0, 100000],
+      price: {
+        from: 0,
+        to: null,
+      },
+      star: null,
       // error: false,
     },
   },
   reducers: {
     insertQueryCategoryId: (state, action) => {
       state.query.categoryId = action.payload;
+    },
+    insertQueryTrademarkId: (state, action) => {
+      state.query.trademarkId = action.payload;
     },
     insertQuerySearch: (state, action) => {
       state.query.categoryId = '';
@@ -25,10 +34,34 @@ const querySlice = createSlice({
     insertQuerySort: (state, action) => {
       state.query.sort = { ...action.payload };
     },
+    changeQueryPrice: (state, action) => {
+      state.query.price = { ...action.payload };
+    },
+    selectQureyByStar: (state, action) => {
+      state.query.star = action.payload;
+    },
+    refreshQuery: (state) => {
+      state.query.categoryId = '';
+      state.query.trademarkId = '';
+      state.query.name = '';
+      state.query.sort = {};
+      state.query.price = {
+        from: 0,
+        to: null,
+      };
+      state.query.star = null;
+    },
   },
 });
 
-export const { insertQueryCategoryId, insertQuerySearch, insertQuerySort } =
-  querySlice.actions;
+export const {
+  insertQueryCategoryId,
+  insertQuerySearch,
+  insertQuerySort,
+  changeQueryPrice,
+  selectQureyByStar,
+  refreshQuery,
+  insertQueryTrademarkId,
+} = querySlice.actions;
 
 export default querySlice.reducer;

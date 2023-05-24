@@ -60,6 +60,7 @@ axiosClient.interceptors.response.use(
     }
 
     if (name === 'Authenticated' && message === 'You are not authenticated') {
+      window.location.href = '/';
       return false;
     }
 
@@ -70,8 +71,10 @@ axiosClient.interceptors.response.use(
 const refreshToken = async () => {
   const refreshToken = JSON.parse(`${localStorage?.getItem('refreshToken')}`);
   const accessToken = await axiosClient.post(
+    // const accessToken = await axios.post(
+    // '/auth/refreshToken',
     '/auth/refreshToken',
-    refreshToken
+    { refreshToken }
   );
   return accessToken;
 };

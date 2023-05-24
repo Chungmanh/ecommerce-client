@@ -77,18 +77,21 @@ export const createOrder = async (
       quantity: number;
     };
     shop_name: string;
-  }[]
+  }[],
+  info: {
+    address: string;
+    telephone: string;
+  }
 ): Promise<{ isSuccess: boolean }> => {
   const url = '/order/add';
-  console.log('order: ', order);
+  console.log('order: ', order, info);
 
   return axiosClient.post(
     url,
-    { order },
+    { order, info },
     {
       headers: {
         'content-type': 'application/json',
-        // 'content-type': 'multipart/form-data',
       },
     }
   );

@@ -43,7 +43,7 @@ const Order = () => {
     console.log('run useEffect');
     getProducts();
   }, []);
-  console.log('products: ', products);
+  // console.log('products: ', products);
 
   return (
     <div>

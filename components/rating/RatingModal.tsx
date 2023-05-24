@@ -69,14 +69,14 @@ const RatingModal = (props: any) => {
       }
     },
   });
-  console.log('star :', star);
-  console.log('product :', product);
+  // console.log('star :', star);
+  // console.log('product :', product);
   useEffect(() => {
     async function getProduct(productId: string) {
       const product = await getProductById(productId);
       setProduct(product);
     }
-    console.log('run useEffect');
+    // console.log('run useEffect');
     if (productId && productId !== '') {
       getProduct(productId);
     }

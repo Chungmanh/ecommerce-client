@@ -106,7 +106,7 @@ const Shop: NextPageWithLayout = () => {
                     <Td>
                       <Box
                         sx={{
-                          width: '200px',
+                          width: '180px',
                           // fontSize: '12px',
                           overflow: 'hidden',
                           whiteSpace: 'pre-wrap',

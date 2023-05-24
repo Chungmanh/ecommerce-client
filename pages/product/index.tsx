@@ -1,15 +1,17 @@
 import { Box, Image, Text } from '@chakra-ui/react';
 import type { AppProps } from 'next/app';
+import { memo } from 'react';
 import Stars from '../../components/rating/star';
 
 interface Props {
   name: string;
   image: string;
   price: number;
+  star: number;
   // frontMatter: FrontMatter;
 }
 
-const Product: React.FC<Props> = ({ name, image, price }) => {
+const Product: React.FC<Props> = ({ name, image, price, star }) => {
   return (
     <Box
       sx={{
@@ -64,9 +66,24 @@ const Product: React.FC<Props> = ({ name, image, price }) => {
             <span style={{ fontSize: '12px' }}>₫</span>
             <span style={{ fontSize: '18px' }}>{price}</span>
           </Box>
-          <Box sx={{ display: 'flex', padding: '3px 0px' }}>
-            <Stars star={3} size={'14px'} />
-            <span style={{ fontSize: '12px', color: '#9e9e9e' }}>(353)</span>
+          <Box sx={{ display: 'flex', padding: '3px 0px', height: '25px' }}>
+            {star ? (
+              <>
+                <Stars star={star} size={'14px'} />
+                <span style={{ fontSize: '12px', color: '#9e9e9e' }}>
+                  ({star})
+                </span>
+              </>
+            ) : (
+              <Text
+                sx={{
+                  color: '#767676',
+                  fontSize: '12px',
+                }}
+              >
+                Chưa Có Đánh Giá
+              </Text>
+            )}
           </Box>
         </Box>
       </Box>
@@ -74,4 +91,4 @@ const Product: React.FC<Props> = ({ name, image, price }) => {
   );
 };
 
-export default Product;
+export default memo(Product);

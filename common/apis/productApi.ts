@@ -17,6 +17,8 @@ export interface IProduct {
 
 export const addProduct = async (product: IProduct) => {
   const url = '/product/add';
+  console.log('product: ', product);
+
   return axiosClient.post(url, product, {
     headers: {
       'content-type': 'multipart/form-data',
@@ -29,13 +31,20 @@ export const deleteProduct = async (id: string) => {
   return axiosClient.delete(url);
 };
 
-export const getProductsByShop = async (): Promise<any[]> => {
+export const getProductsByShop = async (
+  keyword: string = ''
+): Promise<any[]> => {
   const url = '/product/get-product-by-shop';
-  return axiosClient.get(url, {
-    headers: {
-      'content-type': 'multipart/form-data',
-    },
-  });
+  return axiosClient.post(
+    url,
+    { keyword },
+    {
+      headers: {
+        // 'content-type': 'multipart/form-data',
+        'content-type': 'application/json',
+      },
+    }
+  );
 };
 
 export const getAllProducts = async (): Promise<any[]> => {
@@ -69,6 +78,19 @@ export const getProductByIds = async (ids: string[]): Promise<any> => {
       'content-type': 'application/json',
     },
   });
+};
+
+export const getProductByKeyword = async (keyword: string): Promise<any> => {
+  const url = '/product/get-products-keyword';
+  return axiosClient.post(
+    url,
+    { keyword },
+    {
+      headers: {
+        'content-type': 'application/json',
+      },
+    }
+  );
 };
 
 export const getProductsByOrderId = async (orderId: string[]): Promise<any> => {

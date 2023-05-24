@@ -28,7 +28,6 @@ const notActive = {
 const SortBar = () => {
   const dispatch = useDispatch();
   const query = useSelector((state: any) => state.search.query);
-  console.log('query: ', query);
 
   const handleChangeQuerySort = (e: any) => {
     const name = e.target.name;
@@ -46,7 +45,6 @@ const SortBar = () => {
     dispatch(insertQuerySort(sort));
   };
 
-  useEffect(() => {}, []);
   return (
     <Box
       sx={{

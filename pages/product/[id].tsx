@@ -2,8 +2,10 @@ import { Box, Avatar, Divider, Button, Text } from '@chakra-ui/react';
 import axios from 'axios';
 import Head from 'next/head';
 import { useEffect, useState } from 'react';
+import Link from 'next/link';
 import Stars from '../../components/rating/star';
 import { BsCartPlus } from 'react-icons/bs';
+import { MdStorefront } from 'react-icons/md';
 import { addToCart } from '../../common/apis/cartApi';
 import { addStart, addSuccess } from '../../redux/cartSlice';
 import { onOpen } from '../../redux/actionSlice';
@@ -101,7 +103,19 @@ const ProductDetail = (props: any) => {
                 {product.name}
               </Box>
               <Box sx={{ display: 'flex' }}>
-                <Stars star={3} size={'14px'} />{' '}
+                {product.star ? (
+                  <Stars star={product.star} size={'14px'} />
+                ) : (
+                  <Box
+                    sx={{
+                      color: 'rgb(120, 120, 120)',
+                      fontSize: '15px',
+                    }}
+                  >
+                    Chưa Có Đánh Giá
+                  </Box>
+                )}
+
                 <Box
                   sx={{
                     cursor: 'pointer',
@@ -115,27 +129,29 @@ const ProductDetail = (props: any) => {
                 </Box>
               </Box>
             </Box>
-            <Box
-              sx={{
-                backgroundColor: 'rgb(250, 250, 250)',
-                borderRadius: '4px',
-                padding: '0px 16px 12px',
-                boxSizing: 'border-box',
-              }}
-            >
-              <Box
-                sx={{
-                  fontSize: '32px',
-                  margin: '0px 8px',
-                  height: '66px',
-                  fontWeight: 400,
-                  color: '#FF424E',
-                }}
-              >
-                {product.price} ₫
-              </Box>
-            </Box>
-            {/* <Box
+            <Box sx={{ display: 'flex' }}>
+              <Box sx={{ flex: 2 }}>
+                <Box
+                  sx={{
+                    backgroundColor: 'rgb(250, 250, 250)',
+                    borderRadius: '4px',
+                    padding: '0px 16px 12px',
+                    boxSizing: 'border-box',
+                  }}
+                >
+                  <Box
+                    sx={{
+                      fontSize: '32px',
+                      margin: '0px 8px',
+                      height: '66px',
+                      fontWeight: 400,
+                      color: '#FF424E',
+                    }}
+                  >
+                    {product.price} ₫
+                  </Box>
+                </Box>
+                {/* <Box
               sx={{
                 display: 'flex',
                 fontSize: '.875rem',
@@ -191,71 +207,122 @@ const ProductDetail = (props: any) => {
                 </Button>
               </Box>
             </Box> */}
-            <Box
-              sx={{
-                display: 'flex',
-                color: '#757575',
-                fontSize: '.875rem',
-                alignItems: 'center',
-                margin: '20px 0px',
-              }}
-            >
-              <Box
-                as={'span'}
-                sx={{
-                  width: '110px',
-                }}
-              >
-                Số lượng
-              </Box>
-              <Box sx={{ display: 'flex' }}>
-                <Box
-                  as="button"
-                  sx={{
-                    boxSizing: 'border-box',
-                    border: '1px solid rgba(0,0,0,.09)',
-                    padding: '1px 6px',
-                    width: '32px',
-                    height: '32px',
-                    textAlign: 'center',
-                  }}
-                  disabled={quantity <= 1}
-                  onClick={() => setQuantity(quantity - 1)}
-                >
-                  -
-                </Box>
                 <Box
                   sx={{
                     display: 'flex',
-                    border: '1px solid rgba(0,0,0,.09)',
-                    borderLeft: 0,
-                    borderRight: 0,
-                    width: '50px',
-                    height: '32px',
-                    justifyContent: 'center',
+                    color: '#757575',
+                    fontSize: '.875rem',
+                    alignItems: 'center',
+                    margin: '20px 0px',
+                  }}
+                >
+                  <Box
+                    as={'span'}
+                    sx={{
+                      width: '110px',
+                    }}
+                  >
+                    Số lượng
+                  </Box>
+                  <Box sx={{ display: 'flex' }}>
+                    <Box
+                      as="button"
+                      sx={{
+                        boxSizing: 'border-box',
+                        border: '1px solid rgba(0,0,0,.09)',
+                        padding: '1px 6px',
+                        width: '32px',
+                        height: '32px',
+                        textAlign: 'center',
+                      }}
+                      disabled={quantity <= 1}
+                      onClick={() => setQuantity(quantity - 1)}
+                    >
+                      -
+                    </Box>
+                    <Box
+                      sx={{
+                        display: 'flex',
+                        border: '1px solid rgba(0,0,0,.09)',
+                        borderLeft: 0,
+                        borderRight: 0,
+                        width: '50px',
+                        height: '32px',
+                        justifyContent: 'center',
+                        alignItems: 'center',
+                      }}
+                    >
+                      {quantity}
+                    </Box>
+                    <Box
+                      as="button"
+                      sx={{
+                        boxSizing: 'border-box',
+                        border: '1px solid rgba(0,0,0,.09)',
+                        padding: '1px 6px',
+                        width: '32px',
+                        height: '32px',
+                        textAlign: 'center',
+                      }}
+                      disabled={quantity >= product.quantity}
+                      onClick={() => setQuantity(quantity + 1)}
+                    >
+                      +
+                    </Box>
+                  </Box>
+                  <Box as="span" sx={{ marginLeft: '15px' }}>
+                    {product.quantity} sản phẩm có sẵn
+                  </Box>
+                </Box>
+              </Box>
+              <Box
+                sx={{
+                  flex: 1,
+                  borderRadius: '4px',
+                  boxShadow:
+                    'rgb(242, 242, 242) 1px 1px 0px 0px inset, rgb(242, 242, 242) -1px -1px 0px 0px inset',
+                  margin: '0px 12px',
+                  padding: '10px',
+                }}
+              >
+                <Box
+                  sx={{
+                    display: 'flex',
                     alignItems: 'center',
                   }}
                 >
-                  {quantity}
+                  <Avatar
+                    name={product?.shopName || ''}
+                    src={product?.shopAvatar || ''}
+                  />
+                  <Box ml={3}>
+                    <Text
+                      sx={{
+                        fontSize: '15px',
+                        fontWeight: 500,
+                      }}
+                    >
+                      {product?.shopName || ''}
+                    </Text>
+                    <Text
+                      sx={{
+                        fontSize: '12px',
+                        color: '#696c6f',
+                      }}
+                    >
+                      Sản phẩm: <span>{product?.totalProduct || 0}</span>
+                    </Text>
+                  </Box>
                 </Box>
-                <Box
-                  as="button"
-                  sx={{
-                    boxSizing: 'border-box',
-                    border: '1px solid rgba(0,0,0,.09)',
-                    padding: '1px 6px',
-                    width: '32px',
-                    height: '32px',
-                    textAlign: 'center',
-                  }}
-                  disabled={quantity >= product.quantity}
-                  onClick={() => setQuantity(quantity + 1)}
+                <Button
+                  leftIcon={<MdStorefront />}
+                  colorScheme="blue"
+                  variant="outline"
+                  size="sm"
+                  mt={3}
                 >
-                  +
-                </Box>
-              </Box>
-              <Box as="span" sx={{ marginLeft: '15px' }}>
-                {product.quantity} sản phẩm có sẵn
+                  <Link href={`/shop/${product?.shopId}`}>Xem Shop</Link>
+                </Button>
               </Box>
             </Box>
             <Box>
@@ -263,7 +330,7 @@ const ProductDetail = (props: any) => {
                 leftIcon={<BsCartPlus />}
                 variant="outline"
                 sx={{ marginRight: '12px', height: '48px' }}
-                onClick={() => handleAddToCart()}
+                onClick={() => handleAddToCart(quantity)}
               >
                 Thêm vào giỏ hàng
               </Button>

@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { Box, Text } from '@chakra-ui/react';
 import Product from '../../pages/product/index';
 import { recommend } from '../../common/apis/actionApi';
-import React from 'react';
+import { memo } from 'react';
 import Slider from 'react-slick';
 import 'slick-carousel/slick/slick.css';
 import 'slick-carousel/slick/slick-theme.css';
@@ -34,6 +34,7 @@ const Recommend = () => {
   const handleClickProduct = async (id: string) => {
     await router.push(`/product/${id}`);
   };
+
   useEffect(() => {
     recommendSystem();
   }, []);
@@ -69,6 +70,7 @@ const Recommend = () => {
                 name={product.name}
                 image={product.avatar}
                 price={product.price}
+                star={product.star}
               />
             </Box>
           ))}
@@ -77,4 +79,4 @@ const Recommend = () => {
   );
 };
 
-export default Recommend;
+export default memo(Recommend);

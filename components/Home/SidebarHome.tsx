@@ -1,12 +1,14 @@
-import { Box, Text, Divider } from '@chakra-ui/react';
+import { Box, Text, Button } from '@chakra-ui/react';
 import Link from 'next/link';
 import { HiOutlineHome, HiOutlineUser } from 'react-icons/hi';
 import { RiProductHuntLine } from 'react-icons/ri';
 import { ClassNames } from '@emotion/react';
 import { getAllCategory, ICategory } from '../../common/apis/categoryApi';
 import ItemMenu from './ItemMenuSidebarHone';
-import { useEffect, useState } from 'react';
-import { insertQueryCategoryId } from '../../redux/querySlice';
+import FilterPrice from './FilterPrice';
+import FilterStar from './FilterStar';
+import { useEffect, useState, memo } from 'react';
+import { insertQueryCategoryId, refreshQuery } from '../../redux/querySlice';
 import { useSelector, useDispatch } from 'react-redux';
 
 const menu_data = [
@@ -89,13 +91,20 @@ const Sidebar = () => {
     dispatch(insertQueryCategoryId(value));
   };
 
+  const handleRefreshQuery = () => {
+    dispatch(refreshQuery());
+  };
+
+  async function getCategories() {
+    const categories = await getAllCategory();
+    setCategories(categories);
+  }
+
   useEffect(() => {
-    async function getCategories() {
-      const categories = await getAllCategory();
-      setCategories(categories);
-    }
+    handleRefreshQuery();
     getCategories();
   }, []);
+
   return (
     <Box sx={{ padding: '0px 16px' }}>
       <Box
@@ -134,9 +143,36 @@ const Sidebar = () => {
             </Box>
           ))}
       </Box>
-      <Divider orientation="horizontal" />
+
+      <FilterStar />
+      <FilterPrice />
+      <Box
+        sx={{
+          width: '228px',
+          backgroundColor: '#fff',
+          padding: '12px 8px',
+          borderRadius: '8px',
+        }}
+        mt={3}
+      >
+        <Box
+          sx={{
+            padding: '0px 16px',
+            color: 'rgb(39, 39, 42)',
+          }}
+        >
+          <Button
+            colorScheme="twitter"
+            size={'sm'}
+            sx={{ width: '100%' }}
+            onClick={handleRefreshQuery}
+          >
+            XÓA TẤT CẢ
+          </Button>
+        </Box>
+      </Box>
     </Box>
   );
 };
 
-export default Sidebar;
+export default memo(Sidebar);

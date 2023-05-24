@@ -18,15 +18,19 @@ const CartItem = (props: any) => {
         backgroundColor: '#fff',
       }}
     >
-      <Checkbox
-        sx={{ margin: '0px 8px' }}
-        size="lg"
-        colorScheme="twitter"
-        isChecked={isCheckedItem(shop_item.shop_name, item._id)}
-        onChange={(e) =>
-          handleToggleCheckBox(shop_item.shop_name, item._id.toString())
-        }
-      />
+      {item?.deleted ? (
+        <Box>Đã ẩn</Box>
+      ) : (
+        <Checkbox
+          sx={{ margin: '0px 8px' }}
+          size="lg"
+          colorScheme="twitter"
+          isChecked={isCheckedItem(shop_item.shop_name, item._id)}
+          onChange={(e) =>
+            handleToggleCheckBox(shop_item.shop_name, item._id.toString())
+          }
+        />
+      )}
       <Image
         sx={{
           width: '116px',
@@ -36,7 +40,7 @@ const CartItem = (props: any) => {
         }}
         src={`${item?.avatar}`}
       />
-      <Box sx={{ width: '100%', padding: '0px 12px' }}>
+      <Box sx={{ width: '100%', padding: '0px 12px', position: 'relative' }}>
         <Box sx={{ marginBottom: '58px' }}>
           <Box
             sx={{
@@ -137,6 +141,8 @@ const CartItem = (props: any) => {
         <Box
           sx={{
             display: 'flex',
+            position: 'absolute',
+            bottom: '8px',
             color: '#222',
             fontSize: '13px',
           }}

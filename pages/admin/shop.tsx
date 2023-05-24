@@ -11,6 +11,7 @@ import {
   TableContainer,
   useDisclosure,
   Badge,
+  Avatar,
   Button,
 } from '@chakra-ui/react';
 import Head from 'next/head';
@@ -72,13 +73,9 @@ const Shop = () => {
                       <Td>{index + 1}</Td>
                       <Td>{shop?.name || ''}</Td>
                       <Td>
-                        <img
-                          src={`${shop?.avatar}` || ''}
-                          style={{
-                            width: '50px',
-                            height: '50px',
-                            objectFit: 'cover',
-                          }}
+                        <Avatar
+                          name={shop?.name || ''}
+                          src={`${shop?.avatar || ''}`}
                         />
                       </Td>
                       <Td>{shop?.address || ''}</Td>

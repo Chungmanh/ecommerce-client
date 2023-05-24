@@ -30,9 +30,11 @@ import { IoAdd } from 'react-icons/io5';
 import { CiEdit } from 'react-icons/ci';
 import { BsTrash3 } from 'react-icons/bs';
 import LayoutShop from '../../components/LayoutShop';
+import TrademarkModal from '../../components/TrademarkModal';
 import {
   addTrademark,
   getAllTrademarksByUser,
+  deleteTrademark,
 } from '../../common/apis/trademarkApi';
 import moment from 'moment';
 import Swal from 'sweetalert2';
@@ -40,73 +42,50 @@ import Swal from 'sweetalert2';
 const Trademark: NextPageWithLayout = () => {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [trademarks, setTrademarks] = useState<any[]>([]);
+  const [trademarkId, setTrademarkId] = useState('');
 
   const getTrademarks = async () => {
     const trademarks = await getAllTrademarksByUser();
     setTrademarks(trademarks);
   };
 
-  const formik = useFormik({
-    initialValues: {
-      name: '',
-    },
-    enableReinitialize: true,
-    onSubmit: async (values) => {
-      try {
-        console.log('values: ', values);
-        const created = await addTrademark(values);
-        console.log('created: ', created);
-
-        if (
-          created &&
-          Object.keys(created).length !== 0 &&
-          Object.getPrototypeOf(created) === Object.prototype
-        ) {
-          onClose();
-          Swal.fire({
-            customClass: {
-              container: 'my-swal',
-            },
-            icon: 'success',
-            title: 'Thao tác thành công',
-            showConfirmButton: false,
-            timer: 1000,
-          });
+  const handleDeleteTrademark = async (id: string) => {
+    Swal.fire({
+      title: 'Bạn có chắc chắn?',
+      text: 'Xác nhận xóa thương hiệu này!',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Xác nhận',
+      cancelButtonText: 'Hủy',
+    }).then(async (result) => {
+      if (result.isConfirmed) {
+        const deleted = await deleteTrademark(id);
+        if (deleted && Object.keys(deleted).length !== 0) {
+          const new_trademarks = trademarks.filter(
+            (trademark) => trademark._id !== id
+          );
+          Swal.fire('Deleted!', 'Xóa thành công', 'success');
+          setTrademarks(new_trademarks);
         } else {
-          Swal.fire({
-            customClass: {
-              container: 'my-swal',
-            },
-            icon: 'error',
-            title: 'Yêu cầu nhập đúng dữ liệu',
-            showConfirmButton: false,
-            timer: 1000,
-          });
+          Swal.fire('Error!', 'Xóa thất bại.', 'error');
         }
-      } catch (error: any) {
-        Swal.fire({
-          customClass: {
-            container: 'my-swal',
-          },
-          icon: 'error',
-          title: error.message,
-          showConfirmButton: false,
-          timer: 1000,
-        });
       }
-    },
-  });
+    });
+  };
 
-  console.log('trademarks: ', trademarks);
+  const handleEditTrademark = async (id: string) => {
+    setTrademarkId(id);
+    onOpen();
+  };
 
   useEffect(() => {
-    if (!isOpen) {
-      formik.resetForm();
-      console.log('reset: ', !isOpen);
-    }
     getTrademarks();
+    if (!isOpen) {
+      setTrademarkId('');
+    }
   }, [isOpen]);
-
   return (
     <div>
       <Head>
@@ -149,14 +128,14 @@ const Trademark: NextPageWithLayout = () => {
                           style={{
                             cursor: 'pointer',
                           }}
-                          // onClick={() => handleEditProduct(product._id)}
+                          onClick={() => handleEditTrademark(trademark._id)}
                         />
                         <BsTrash3
                           size={16}
                           style={{
                             cursor: 'pointer',
                           }}
-                          // onClick={() => handleDeleteProduct(product._id)}
+                          onClick={() => handleDeleteTrademark(trademark._id)}
                         />
                       </Box>
                     </Td>
@@ -173,36 +152,13 @@ const Trademark: NextPageWithLayout = () => {
             icon={<IoAdd />}
             onClick={onOpen}
           />
-          <Modal isOpen={isOpen} onClose={onClose}>
-            <ModalOverlay />
-            <ModalContent>
-              <ModalHeader>Thêm mới thương hiệu</ModalHeader>
-              <ModalCloseButton />
-              <ModalBody pb={6}>
-                <form onSubmit={formik.handleSubmit}>
-                  <FormControl>
-                    <FormLabel>Tên thương hiệu</FormLabel>
-                    <Input
-                      placeholder="Tên thương hiệu"
-                      type={'text'}
-                      name={'name'}
-                      onChange={formik.handleChange}
-                      // value={formik.values.name}
-                    />
-                  </FormControl>
-                </form>
-              </ModalBody>
-
-              <ModalFooter>
-                <Button colorScheme="blue" mr={3} onClick={formik.submitForm}>
-                  Lưu
-                </Button>
-                <Button onClick={onClose}>Hủy</Button>
-              </ModalFooter>
-            </ModalContent>
-          </Modal>
         </Box>
       </Box>
+      <TrademarkModal
+        isOpen={isOpen}
+        onClose={onClose}
+        trademarkId={trademarkId}
+      />
     </div>
   );
 };

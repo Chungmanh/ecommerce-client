@@ -14,6 +14,7 @@ import Link from 'next/link';
 import { TfiAngleLeft } from 'react-icons/tfi';
 import { register, IUser } from '../common/apis/authApi';
 import Swal from 'sweetalert2';
+import * as Yup from 'yup';
 
 interface IProps {
   setIsLogin: Function;
@@ -29,6 +30,14 @@ const Register = (props: IProps) => {
       address: '',
       password: '',
     },
+    validationSchema: Yup.object({
+      username: Yup.string().required('Chưa nhập tên người dùng'),
+      telephone: Yup.string()
+        .max(10, 'Số điện thoại chưa đúng định dạng')
+        .required('Chưa nhập số điện thoại'),
+      address: Yup.string().required('Chưa nhập địa chỉ'),
+      password: Yup.string().required('Chưa nhập mật khẩu'),
+    }),
     onSubmit: async (values) => {
       try {
         await register(values);
@@ -72,6 +81,11 @@ const Register = (props: IProps) => {
               onChange={formik.handleChange}
               value={formik.values.username}
             />
+            {formik.touched.username && formik.errors.username ? (
+              <span style={{ fontSize: '12px', color: 'red' }}>
+                {formik.errors.username}
+              </span>
+            ) : null}
           </FormControl>
           <FormControl marginTop={'10px'}>
             <Input
@@ -81,6 +95,11 @@ const Register = (props: IProps) => {
               onChange={formik.handleChange}
               value={formik.values.telephone}
             />
+            {formik.touched.telephone && formik.errors.telephone ? (
+              <span style={{ fontSize: '12px', color: 'red' }}>
+                {formik.errors.telephone}
+              </span>
+            ) : null}
           </FormControl>
           <FormControl marginTop={'10px'}>
             <Input
@@ -90,6 +109,11 @@ const Register = (props: IProps) => {
               onChange={formik.handleChange}
               value={formik.values.address}
             />
+            {formik.touched.address && formik.errors.address ? (
+              <span style={{ fontSize: '12px', color: 'red' }}>
+                {formik.errors.address}
+              </span>
+            ) : null}
           </FormControl>
           <FormControl marginTop={'10px'}>
             <Input
@@ -99,6 +123,11 @@ const Register = (props: IProps) => {
               onChange={formik.handleChange}
               value={formik.values.password}
             />
+            {formik.touched.password && formik.errors.password ? (
+              <span style={{ fontSize: '12px', color: 'red' }}>
+                {formik.errors.password}
+              </span>
+            ) : null}
           </FormControl>
           {/* <FormControl marginTop={'20px'}>
             <Input placeholder="Nhập Lại mật khẩu" type={'password'} />

@@ -1,7 +1,11 @@
 import { Box, Text, Divider } from '@chakra-ui/react';
 import Link from 'next/link';
 import { NavLink } from './NavLink';
-import { AiOutlineTrademark, AiOutlineLineChart } from 'react-icons/ai';
+import {
+  AiOutlineTrademark,
+  AiOutlineLineChart,
+  AiOutlineInfoCircle,
+} from 'react-icons/ai';
 import { BsCardChecklist } from 'react-icons/bs';
 import { FaUsers } from 'react-icons/fa';
 import { RiProductHuntLine, RiTrademarkFill } from 'react-icons/ri';
@@ -25,6 +29,21 @@ const Sidebar = () => {
           }}
         >
           <Text>Danh mục</Text>
+        </Box>
+        <Box>
+          <NavLink
+            href={'/shop/home'}
+            sx={{
+              padding: '10px 16px 10px 24px',
+              fontSize: '14px',
+              fontWeight: 500,
+              lineHeight: 1.5,
+              marginBottom: '4px',
+            }}
+          >
+            <AiOutlineInfoCircle size={18} style={{ marginRight: '10px' }} />
+            <Text>Thông tin</Text>
+          </NavLink>
         </Box>
         <Box>
           <NavLink
@@ -71,7 +90,7 @@ const Sidebar = () => {
         </Box>
         <Box>
           <NavLink
-            href={'/shop/customers'}
+            href={'/shop/revenue'}
             sx={{
               padding: '10px 16px 10px 24px',
               fontSize: '14px',
